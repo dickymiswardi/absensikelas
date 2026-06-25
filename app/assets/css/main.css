@@ -413,10 +413,23 @@ a:hover {
     text-align: center;
   }
 
+  .dash-user-info h2 {
+    font-size: 1rem;
+  }
+
+  .dash-user-info p {
+    font-size: 0.8rem;
+  }
+
   .header-actions {
     width: 100%;
     flex-direction: row;
     justify-content: center;
+  }
+
+  .header-actions .btn {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
   }
 
   .dash-grid {
