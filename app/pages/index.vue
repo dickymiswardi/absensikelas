@@ -68,17 +68,19 @@ async function logout() {
 async function loadDashboardData() {
   if (!isAuthenticated.value) return
   
-  if (user.value?.role === 'admin') {
-    const res = await $fetch('/api/classes')
-    classes.value = (res as any).classes
-  } else {
-    // Guru only loads their class' students
+  const res = await $fetch('/api/classes')
+  classes.value = (res as any).classes
+
+  if (user.value?.role !== 'admin' && classes.value.length > 0) {
+    selectedClass.value = classes.value[0].id
+    loadStudents()
+  } else if (selectedClass.value) {
     loadStudents()
   }
 }
 
 async function loadStudents() {
-  const cId = user.value?.role === 'admin' ? selectedClass.value : user.value?.roleCodeValue
+  const cId = selectedClass.value
   if (!cId) return
   
   const [stuRes, attRes] = await Promise.all([
@@ -96,7 +98,7 @@ async function loadStudents() {
 }
 
 async function markAttendance(student: any, status: string) {
-  const cId = user.value?.role === 'admin' ? selectedClass.value : user.value?.roleCodeValue
+  const cId = selectedClass.value
   await $fetch('/api/attendance', {
     method: 'POST',
     body: {
@@ -131,8 +133,8 @@ import autoTable from 'jspdf-autotable'
 
 const newStudentForm = ref({ nisn: '', name: '' })
 async function addStudent() {
-  const cId = user.value?.role === 'admin' ? selectedClass.value : user.value?.roleCodeValue
-  const cCode = user.value?.role === 'admin' ? classes.value.find(c => c.id === cId)?.code : user.value?.roleCodeValue
+  const cId = selectedClass.value
+  const cCode = classes.value.find(c => c.id === cId)?.code
   
   await $fetch('/api/students', { 
     method: 'POST', 
@@ -148,7 +150,7 @@ const reportEndDate = ref(new Date().toISOString().split('T')[0])
 const generatingReport = ref(false)
 
 async function downloadReport() {
-  const cId = user.value?.role === 'admin' ? selectedClass.value : user.value?.roleCodeValue
+  const cId = selectedClass.value
   if (!cId) {
     alert('Silakan pilih kelas terlebih dahulu.')
     return

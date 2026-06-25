@@ -10,6 +10,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
-  const result = await db.prepare('SELECT * FROM classes ORDER BY created_at DESC').all()
+  let result
+  if (user.role === 'admin') {
+    result = await db.prepare('SELECT * FROM classes ORDER BY created_at DESC').all()
+  } else {
+    result = await db.prepare('SELECT * FROM classes WHERE code = ?').bind(user.roleCodeValue).all()
+  }
+  
   return { classes: result.results || [] }
 })
