@@ -53,5 +53,16 @@ export default defineEventHandler(async (event) => {
     }
   })
 
-  return { report }
+  const classResult = await db.prepare('SELECT code FROM classes WHERE id = ?').bind(classId).first()
+  const classCode = classResult?.code
+
+  let guruName = '-'
+  if (classCode) {
+    const guruResult = await db.prepare('SELECT first_name_label FROM users WHERE role = ? AND role_code_value = ?').bind('guru', classCode).first()
+    if (guruResult) {
+      guruName = guruResult.first_name_label
+    }
+  }
+
+  return { report, guruName }
 })

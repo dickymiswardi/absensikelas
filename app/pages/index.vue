@@ -171,6 +171,7 @@ async function downloadReport() {
   try {
     const res: any = await $fetch(`/api/attendance/report?classId=${cId}&startDate=${reportStartDate.value}&endDate=${reportEndDate.value}`)
     const reportData = res.report
+    const guruName = res.guruName || '-'
     const classObj = classes.value.find(c => c.id === cId)
     const className = classObj ? classObj.name : (user.value?.roleCodeValue || 'Kelas')
 
@@ -180,7 +181,8 @@ async function downloadReport() {
     doc.text('Rekapitulasi Absensi Siswa', 14, 15)
     doc.setFontSize(11)
     doc.text(`Kelas: ${className}`, 14, 23)
-    doc.text(`Periode: ${reportStartDate.value} s.d ${reportEndDate.value}`, 14, 29)
+    doc.text(`Guru: ${guruName}`, 14, 29)
+    doc.text(`Periode: ${reportStartDate.value} s.d ${reportEndDate.value}`, 14, 35)
 
     const tableColumn = ["No", "NISN", "Nama Siswa", "Hadir", "Sakit", "Izin", "Alpha", "Persentase"]
     const tableRows = reportData.map((s: any, i: number) => [
@@ -190,7 +192,7 @@ async function downloadReport() {
     autoTable(doc, {
       head: [tableColumn],
       body: tableRows,
-      startY: 35,
+      startY: 41,
       theme: 'grid',
       styles: { fontSize: 9 },
       headStyles: { fillColor: [37, 99, 235] }
@@ -285,7 +287,7 @@ async function downloadReport() {
           <h2>Halo, {{ user.firstNameLabel || user.username }}</h2>
           <p>Role: <span class="badge badge-blue" style="text-transform: uppercase;">{{ user.role }}</span></p>
         </div>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <div class="header-actions">
           <button v-if="user.role === 'admin'" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
           <NuxtLink v-if="user.role === 'admin'" to="/users" class="btn btn-secondary">Kelola Users</NuxtLink>
           <button @click="logout" class="btn btn-danger">Logout</button>
@@ -299,7 +301,7 @@ async function downloadReport() {
         <div class="glass-panel dash-card" style="grid-column: span 2;">
           <div class="dash-card-header">
             <h3 class="dash-card-title">Absensi Siswa</h3>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+            <div class="attendance-controls">
               <select v-if="user.role === 'admin'" v-model="selectedClass" class="form-input" style="width: auto;">
                 <option value="" disabled>-- Pilih Kelas --</option>
                 <option v-for="c in classes" :key="c.id" :value="c.id">
