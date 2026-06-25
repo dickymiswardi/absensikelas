@@ -134,6 +134,8 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 
 const newStudentForm = ref({ nisn: '', name: '' })
+const showStudentModal = ref(false)
+
 async function addStudent() {
   const cId = selectedClass.value
   const cCode = classes.value.find(c => c.id === cId)?.code
@@ -144,6 +146,7 @@ async function addStudent() {
   })
   newStudentForm.value = { nisn: '', name: '' }
   loadStudents()
+  showStudentModal.value = false
 }
 
 // PDF Report Logic
@@ -307,12 +310,10 @@ async function downloadReport() {
             Silakan pilih kelas terlebih dahulu.
           </div>
           <div v-else>
-            <form @submit.prevent="addStudent" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
               <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
-              <input v-model="newStudentForm.nisn" type="text" placeholder="NISN" class="form-input" required style="flex: 1;" />
-              <input v-model="newStudentForm.name" type="text" placeholder="Nama Siswa" class="form-input" required style="flex: 2;" />
-              <button type="submit" class="btn btn-primary">Tambah Siswa</button>
-            </form>
+              <button type="button" @click="showStudentModal = true" class="btn btn-primary">Tambah Siswa</button>
+            </div>
 
             <div class="table-container">
               <table class="data-table">
@@ -410,6 +411,27 @@ async function downloadReport() {
           <input v-model="newClassForm.code" type="text" placeholder="Masukkan kode kelas" class="form-input" required />
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Kelas</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Siswa -->
+  <div v-if="showStudentModal" class="modal-overlay" @click.self="showStudentModal = false">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 class="dash-card-title">Tambah Siswa Baru</h3>
+        <button @click="showStudentModal = false" class="close-btn">&times;</button>
+      </div>
+      <form @submit.prevent="addStudent" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">NISN</label>
+          <input v-model="newStudentForm.nisn" type="text" placeholder="Masukkan NISN" class="form-input" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Nama Siswa</label>
+          <input v-model="newStudentForm.name" type="text" placeholder="Masukkan Nama Siswa" class="form-input" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Siswa</button>
       </form>
     </div>
   </div>
