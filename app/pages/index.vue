@@ -24,7 +24,7 @@ const successMsg = ref('')
 // Dashboard State
 const classes = ref<any[]>([])
 const students = ref<any[]>([])
-const selectedClass = ref('')
+const selectedClass = useCookie('selected-class', { default: () => '' })
 const attendanceDate = ref(new Date().toISOString().split('T')[0])
 
 async function submitAuth() {
