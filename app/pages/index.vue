@@ -310,9 +310,9 @@ async function downloadReport() {
             Silakan pilih kelas terlebih dahulu.
           </div>
           <div v-else>
-            <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
-              <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary" style="flex: 1;">Tambah Kelas</button>
-              <button type="button" @click="showStudentModal = true" class="btn btn-primary" style="flex: 1;">Tambah Siswa</button>
+            <div class="student-action-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+              <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
+              <button type="button" @click="showStudentModal = true" class="btn btn-primary">Tambah Siswa</button>
             </div>
 
             <div class="table-container">

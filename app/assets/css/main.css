@@ -468,6 +468,18 @@ a:hover {
     gap: 0.25rem;
   }
 
+  /* Keep action buttons side-by-side on mobile without text stacking */
+  .student-action-buttons {
+    flex-wrap: nowrap !important;
+  }
+  
+  .student-action-buttons .btn {
+    flex: 1;
+    white-space: nowrap;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
+
   /* Compact Table for Mobile */
   .data-table th,
   .data-table td {
