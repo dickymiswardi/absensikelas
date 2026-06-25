@@ -363,6 +363,8 @@ a:hover {
 .badge-blue { background-color: var(--c-blue-100); color: var(--c-blue-800); }
 .badge-green { background-color: #d1fae5; color: #065f46; }
 .badge-red { background-color: #fee2e2; color: #991b1b; }
+.badge-yellow { background-color: #fef08a; color: #854d0e; }
+.badge-purple { background-color: #e9d5ff; color: #6b21a8; }
 .badge-gray { background-color: var(--c-slate-200); color: var(--c-slate-700); }
 
 /* Alerts */
@@ -413,7 +415,8 @@ a:hover {
 
   .header-actions {
     width: 100%;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: center;
   }
 
   .dash-grid {
@@ -453,7 +456,9 @@ a:hover {
     flex-direction: column;
   }
   
-  .btn {
+  form[style*="display: flex"] .btn,
+  .modal-content .btn,
+  .attendance-controls .btn {
     width: 100%;
   }
 
@@ -471,7 +476,7 @@ a:hover {
     word-break: break-word;
   }
 
-  .badge {
+  .attendance-actions .badge {
     padding: 0;
     width: 1.4rem;
     height: 1.4rem;
