@@ -122,10 +122,12 @@ watch(selectedClass, loadStudents)
 watch(attendanceDate, loadStudents)
 
 const newClassForm = ref({ name: '', code: '' })
+const showClassModal = ref(false)
 async function addClass() {
   await $fetch('/api/classes', { method: 'POST', body: newClassForm.value })
   newClassForm.value = { name: '', code: '' }
   loadDashboardData()
+  showClassModal.value = false
 }
 
 import jsPDF from 'jspdf'
@@ -283,44 +285,27 @@ async function downloadReport() {
           <h2>Halo, {{ user.firstNameLabel || user.username }}</h2>
           <p>Role: <span class="badge badge-blue" style="text-transform: uppercase;">{{ user.role }}</span></p>
         </div>
-        <div style="display: flex; gap: 1rem;">
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button v-if="user.role === 'admin'" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
           <NuxtLink v-if="user.role === 'admin'" to="/users" class="btn btn-secondary">Kelola Users</NuxtLink>
           <button @click="logout" class="btn btn-danger">Logout</button>
         </div>
       </div>
 
       <div class="dash-grid">
-        <!-- Admin Classes Management -->
-        <div v-if="user.role === 'admin'" class="glass-panel dash-card">
-          <div class="dash-card-header">
-            <h3 class="dash-card-title">Manajemen Kelas</h3>
-          </div>
-          
-          <div class="form-group" style="margin-bottom: 1.5rem;">
-            <label class="form-label">Pilih Kelas Aktif</label>
-            <select v-model="selectedClass" class="form-input">
-              <option value="" disabled>-- Pilih Kelas --</option>
-              <option v-for="c in classes" :key="c.id" :value="c.id">
-                {{ c.name }} (Kode: {{ c.code }})
-              </option>
-            </select>
-          </div>
-          
-          <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;" />
 
-          <form @submit.prevent="addClass" style="display: flex; flex-direction: column; gap: 0.75rem;">
-            <label class="form-label" style="margin-bottom: -0.25rem;">Tambah Kelas Baru</label>
-            <input v-model="newClassForm.name" type="text" placeholder="Nama Kelas" class="form-input" required />
-            <input v-model="newClassForm.code" type="text" placeholder="Kode Kelas" class="form-input" required />
-            <button type="submit" class="btn btn-primary">Tambah Kelas</button>
-          </form>
-        </div>
 
         <!-- Attendance Management -->
         <div class="glass-panel dash-card" style="grid-column: span 2;">
           <div class="dash-card-header">
             <h3 class="dash-card-title">Absensi Siswa</h3>
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+              <select v-if="user.role === 'admin'" v-model="selectedClass" class="form-input" style="width: auto;">
+                <option value="" disabled>-- Pilih Kelas --</option>
+                <option v-for="c in classes" :key="c.id" :value="c.id">
+                  {{ c.name }} ({{ c.code }})
+                </option>
+              </select>
               <input type="date" v-model="attendanceDate" class="form-input" style="width: auto;" />
               <button @click="showReportModal = true" class="btn btn-secondary">Rekap Absensi (PDF)</button>
             </div>
@@ -393,6 +378,27 @@ async function downloadReport() {
           </button>
         </form>
       </div>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Kelas -->
+  <div v-if="showClassModal" class="modal-overlay" @click.self="showClassModal = false">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 class="dash-card-title">Tambah Kelas Baru</h3>
+        <button @click="showClassModal = false" class="close-btn">&times;</button>
+      </div>
+      <form @submit.prevent="addClass" style="display: flex; flex-direction: column; gap: 1rem;">
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Nama Kelas</label>
+          <input v-model="newClassForm.name" type="text" placeholder="Masukkan nama kelas" class="form-input" required />
+        </div>
+        <div class="form-group" style="margin-bottom: 0;">
+          <label class="form-label">Kode Kelas</label>
+          <input v-model="newClassForm.code" type="text" placeholder="Masukkan kode kelas" class="form-input" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Simpan Kelas</button>
+      </form>
     </div>
   </div>
 </template>
