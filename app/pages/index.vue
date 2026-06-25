@@ -148,6 +148,7 @@ async function addStudent() {
 const reportStartDate = ref(new Date().toISOString().split('T')[0])
 const reportEndDate = ref(new Date().toISOString().split('T')[0])
 const generatingReport = ref(false)
+const showReportModal = ref(false)
 
 async function downloadReport() {
   const cId = selectedClass.value
@@ -292,67 +293,37 @@ async function downloadReport() {
         <!-- Admin Classes Management -->
         <div v-if="user.role === 'admin'" class="glass-panel dash-card">
           <div class="dash-card-header">
-            <h3 class="dash-card-title">Daftar Kelas</h3>
+            <h3 class="dash-card-title">Manajemen Kelas</h3>
           </div>
           
-          <form @submit.prevent="addClass" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Pilih Kelas Aktif</label>
+            <select v-model="selectedClass" class="form-input">
+              <option value="" disabled>-- Pilih Kelas --</option>
+              <option v-for="c in classes" :key="c.id" :value="c.id">
+                {{ c.name }} (Kode: {{ c.code }})
+              </option>
+            </select>
+          </div>
+          
+          <hr style="border: 0; border-top: 1px solid var(--border-color); margin-bottom: 1.5rem;" />
+
+          <form @submit.prevent="addClass" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <label class="form-label" style="margin-bottom: -0.25rem;">Tambah Kelas Baru</label>
             <input v-model="newClassForm.name" type="text" placeholder="Nama Kelas" class="form-input" required />
             <input v-model="newClassForm.code" type="text" placeholder="Kode Kelas" class="form-input" required />
-            <button type="submit" class="btn btn-primary">Tambah</button>
+            <button type="submit" class="btn btn-primary">Tambah Kelas</button>
           </form>
-
-          <div class="table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Nama</th>
-                  <th>Kode</th>
-                  <th>Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="c in classes" :key="c.id">
-                  <td>{{ c.name }}</td>
-                  <td>{{ c.code }}</td>
-                  <td>
-                    <button @click="selectedClass = c.id; loadStudents()" class="btn btn-secondary" style="padding: 0.25rem 0.75rem; font-size: 0.8rem;">Pilih</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Report Management -->
-        <div class="glass-panel dash-card">
-          <div class="dash-card-header">
-            <h3 class="dash-card-title">Laporan Rekap Absensi</h3>
-          </div>
-          <div v-if="!selectedClass && user.role === 'admin'" class="alert alert-error">
-            Pilih kelas untuk mengunduh laporan.
-          </div>
-          <div v-else>
-            <form @submit.prevent="downloadReport" style="display: flex; flex-direction: column; gap: 1rem;">
-              <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Mulai Tanggal</label>
-                <input type="date" v-model="reportStartDate" class="form-input" required />
-              </div>
-              <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Sampai Tanggal</label>
-                <input type="date" v-model="reportEndDate" class="form-input" required />
-              </div>
-              <button type="submit" class="btn btn-primary" :disabled="generatingReport">
-                {{ generatingReport ? 'Menyiapkan PDF...' : 'Unduh Laporan (PDF)' }}
-              </button>
-            </form>
-          </div>
         </div>
 
         <!-- Attendance Management -->
         <div class="glass-panel dash-card" style="grid-column: span 2;">
           <div class="dash-card-header">
             <h3 class="dash-card-title">Absensi Siswa</h3>
-            <input type="date" v-model="attendanceDate" class="form-input" style="width: auto;" />
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <input type="date" v-model="attendanceDate" class="form-input" style="width: auto;" />
+              <button @click="showReportModal = true" class="btn btn-secondary">Rekap Absensi (PDF)</button>
+            </div>
           </div>
 
           <div v-if="!selectedClass && user.role === 'admin'" class="alert alert-error">
@@ -393,6 +364,34 @@ async function downloadReport() {
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Report -->
+  <div v-if="showReportModal" class="modal-overlay" @click.self="showReportModal = false">
+    <div class="modal-content glass-panel">
+      <div class="modal-header">
+        <h3 class="dash-card-title">Laporan Rekap Absensi</h3>
+        <button @click="showReportModal = false" class="close-btn">&times;</button>
+      </div>
+      <div v-if="!selectedClass && user.role === 'admin'" class="alert alert-error">
+        Pilih kelas terlebih dahulu di menu Manajemen Kelas.
+      </div>
+      <div v-else>
+        <form @submit.prevent="downloadReport" style="display: flex; flex-direction: column; gap: 1rem;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Mulai Tanggal</label>
+            <input type="date" v-model="reportStartDate" class="form-input" required />
+          </div>
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label">Sampai Tanggal</label>
+            <input type="date" v-model="reportEndDate" class="form-input" required />
+          </div>
+          <button type="submit" class="btn btn-primary" :disabled="generatingReport" style="width: 100%;">
+            {{ generatingReport ? 'Menyiapkan PDF...' : 'Unduh Laporan (PDF)' }}
+          </button>
+        </form>
       </div>
     </div>
   </div>
