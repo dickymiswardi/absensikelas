@@ -295,13 +295,6 @@ async function downloadReport() {
           <div class="dash-card-header">
             <h3 class="dash-card-title">Absensi Siswa</h3>
             <div class="attendance-controls">
-              <select v-if="user.role === 'admin'" v-model="selectedClass" class="form-input" style="width: auto;">
-                <option value="" disabled>-- Pilih Kelas --</option>
-                <option v-for="c in classes" :key="c.id" :value="c.id">
-                  {{ c.name }} ({{ c.code }})
-                </option>
-              </select>
-              <input type="date" v-model="attendanceDate" class="form-input" style="width: auto;" />
               <button @click="showReportModal = true" class="btn btn-secondary">Rekap Absensi (PDF)</button>
             </div>
           </div>
@@ -310,9 +303,19 @@ async function downloadReport() {
             Silakan pilih kelas terlebih dahulu.
           </div>
           <div v-else>
-            <div class="student-action-buttons" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-              <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
-              <button type="button" @click="showStudentModal = true" class="btn btn-primary">Tambah Siswa</button>
+            <div class="attendance-filters" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center;">
+              <select v-if="user.role === 'admin'" v-model="selectedClass" class="form-input" style="width: auto;">
+                <option value="" disabled>-- Pilih Kelas --</option>
+                <option v-for="c in classes" :key="c.id" :value="c.id">
+                  {{ c.name }} ({{ c.code }})
+                </option>
+              </select>
+              <input type="date" v-model="attendanceDate" class="form-input" style="width: auto;" />
+              
+              <div class="student-action-buttons" style="display: flex; gap: 0.5rem; flex-wrap: wrap; flex: 1;">
+                <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
+                <button type="button" @click="showStudentModal = true" class="btn btn-primary">Tambah Siswa</button>
+              </div>
             </div>
 
             <div class="table-container">
