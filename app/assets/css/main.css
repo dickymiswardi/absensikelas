@@ -468,16 +468,27 @@ a:hover {
     gap: 0.25rem;
   }
 
-  /* Keep action buttons side-by-side on mobile without text stacking */
-  .student-action-buttons {
+  /* Keep action buttons and filters side-by-side on mobile */
+  .student-action-buttons,
+  .attendance-filters {
     flex-wrap: nowrap !important;
   }
   
-  .student-action-buttons .btn {
+  .student-action-buttons .btn,
+  .attendance-filters .form-input {
     flex: 1;
     white-space: nowrap;
+    width: auto !important;
+  }
+
+  .student-action-buttons .btn {
     padding: 0.5rem 0.25rem;
     font-size: 0.8rem;
+  }
+
+  .attendance-filters .form-input {
+    padding: 0.5rem;
+    font-size: 0.85rem;
   }
 
   /* Compact Table for Mobile */
