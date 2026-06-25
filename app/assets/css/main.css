@@ -385,8 +385,21 @@ a:hover {
   border: 1px solid #bbf7d0;
 }
 
+/* Utility for mobile text swapping */
+.show-mobile {
+  display: none;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
+  .show-mobile {
+    display: inline;
+    font-weight: 900;
+  }
+  .hide-mobile {
+    display: none;
+  }
+
   .app-container {
     padding: 1rem;
   }

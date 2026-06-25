@@ -184,7 +184,7 @@ async function downloadReport() {
     doc.text(`Guru: ${guruName}`, 14, 29)
     doc.text(`Periode: ${reportStartDate.value} s.d ${reportEndDate.value}`, 14, 35)
 
-    const tableColumn = ["No", "NISN", "Nama Siswa", "Hadir", "Sakit", "Izin", "Alpha", "Persentase"]
+    const tableColumn = ["No", "NISN", "Nama Siswa", "Hadir", "Sakit", "Izin", "Alpha", "Persentase\nKehadiran"]
     const tableRows = reportData.map((s: any, i: number) => [
       i + 1, s.nisn, s.name, s.hadir, s.sakit, s.izin, s.alpha, s.percentage
     ])
@@ -282,17 +282,7 @@ async function downloadReport() {
 
     <!-- DASHBOARD -->
     <div v-else>
-      <div class="glass-panel dash-header">
-        <div class="dash-user-info">
-          <h2>Halo, {{ user.firstNameLabel || user.username }}</h2>
-          <p>Role: <span class="badge badge-blue" style="text-transform: uppercase;">{{ user.role }}</span></p>
-        </div>
-        <div class="header-actions">
-          <button v-if="user.role === 'admin'" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
-          <NuxtLink v-if="user.role === 'admin'" to="/users" class="btn btn-secondary">Kelola Users</NuxtLink>
-          <button @click="logout" class="btn btn-danger">Logout</button>
-        </div>
-      </div>
+
 
       <div class="dash-grid">
 
@@ -317,9 +307,10 @@ async function downloadReport() {
             Silakan pilih kelas terlebih dahulu.
           </div>
           <div v-else>
-            <form @submit.prevent="addStudent" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
-              <input v-model="newStudentForm.nisn" type="text" placeholder="NISN" class="form-input" required />
-              <input v-model="newStudentForm.name" type="text" placeholder="Nama Siswa" class="form-input" required />
+            <form @submit.prevent="addStudent" style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+              <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
+              <input v-model="newStudentForm.nisn" type="text" placeholder="NISN" class="form-input" required style="flex: 1;" />
+              <input v-model="newStudentForm.name" type="text" placeholder="Nama Siswa" class="form-input" required style="flex: 2;" />
               <button type="submit" class="btn btn-primary">Tambah Siswa</button>
             </form>
 
@@ -337,10 +328,18 @@ async function downloadReport() {
                     <td>{{ s.nisn }}</td>
                     <td>{{ s.name }}</td>
                     <td class="attendance-actions">
-                      <button @click="markAttendance(s, 'hadir')" class="badge" :class="s.status === 'hadir' ? 'badge-green' : 'badge-gray'">Hadir</button>
-                      <button @click="markAttendance(s, 'sakit')" class="badge" :class="s.status === 'sakit' ? 'badge-blue' : 'badge-gray'">Sakit</button>
-                      <button @click="markAttendance(s, 'izin')" class="badge" :class="s.status === 'izin' ? 'badge-blue' : 'badge-gray'">Izin</button>
-                      <button @click="markAttendance(s, 'alpha')" class="badge" :class="s.status === 'alpha' ? 'badge-red' : 'badge-gray'">Alpha</button>
+                      <button @click="markAttendance(s, 'hadir')" class="badge" :class="s.status === 'hadir' ? 'badge-green' : 'badge-gray'">
+                        <span class="hide-mobile">Hadir</span><span class="show-mobile">H</span>
+                      </button>
+                      <button @click="markAttendance(s, 'sakit')" class="badge" :class="s.status === 'sakit' ? 'badge-blue' : 'badge-gray'">
+                        <span class="hide-mobile">Sakit</span><span class="show-mobile">S</span>
+                      </button>
+                      <button @click="markAttendance(s, 'izin')" class="badge" :class="s.status === 'izin' ? 'badge-blue' : 'badge-gray'">
+                        <span class="hide-mobile">Izin</span><span class="show-mobile">I</span>
+                      </button>
+                      <button @click="markAttendance(s, 'alpha')" class="badge" :class="s.status === 'alpha' ? 'badge-red' : 'badge-gray'">
+                        <span class="hide-mobile">Alpha</span><span class="show-mobile">A</span>
+                      </button>
                     </td>
                   </tr>
                   <tr v-if="students.length === 0">
@@ -350,6 +349,17 @@ async function downloadReport() {
               </table>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="glass-panel dash-header" style="margin-top: 1.5rem; margin-bottom: 0;">
+        <div class="dash-user-info">
+          <h2>Halo, {{ user.firstNameLabel || user.username }}</h2>
+          <p>Role: <span class="badge badge-blue" style="text-transform: uppercase;">{{ user.role }}</span></p>
+        </div>
+        <div class="header-actions">
+          <NuxtLink v-if="user.role === 'admin'" to="/users" class="btn btn-secondary">Kelola Users</NuxtLink>
+          <button @click="logout" class="btn btn-danger">Logout</button>
         </div>
       </div>
     </div>
