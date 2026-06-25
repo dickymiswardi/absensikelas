@@ -472,8 +472,14 @@ a:hover {
   }
 
   .badge {
-    padding: 0.25rem 0.15rem;
-    font-size: 0.65rem;
+    padding: 0;
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
   }
 }
 

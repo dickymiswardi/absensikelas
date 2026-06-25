@@ -331,10 +331,10 @@ async function downloadReport() {
                       <button @click="markAttendance(s, 'hadir')" class="badge" :class="s.status === 'hadir' ? 'badge-green' : 'badge-gray'">
                         <span class="hide-mobile">Hadir</span><span class="show-mobile">H</span>
                       </button>
-                      <button @click="markAttendance(s, 'sakit')" class="badge" :class="s.status === 'sakit' ? 'badge-blue' : 'badge-gray'">
+                      <button @click="markAttendance(s, 'sakit')" class="badge" :class="s.status === 'sakit' ? 'badge-yellow' : 'badge-gray'">
                         <span class="hide-mobile">Sakit</span><span class="show-mobile">S</span>
                       </button>
-                      <button @click="markAttendance(s, 'izin')" class="badge" :class="s.status === 'izin' ? 'badge-blue' : 'badge-gray'">
+                      <button @click="markAttendance(s, 'izin')" class="badge" :class="s.status === 'izin' ? 'badge-purple' : 'badge-gray'">
                         <span class="hide-mobile">Izin</span><span class="show-mobile">I</span>
                       </button>
                       <button @click="markAttendance(s, 'alpha')" class="badge" :class="s.status === 'alpha' ? 'badge-red' : 'badge-gray'">
