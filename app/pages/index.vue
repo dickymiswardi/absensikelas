@@ -295,6 +295,10 @@ async function downloadReport() {
           <div class="dash-card-header">
             <h3 class="dash-card-title">Absensi Siswa</h3>
             <div class="attendance-controls">
+              <div class="student-action-buttons" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
+                <button type="button" @click="showStudentModal = true" class="btn btn-primary">Tambah Siswa</button>
+              </div>
               <button @click="showReportModal = true" class="btn btn-secondary">Rekap Absensi (PDF)</button>
             </div>
           </div>
@@ -311,11 +315,6 @@ async function downloadReport() {
                 </option>
               </select>
               <input type="date" v-model="attendanceDate" class="form-input" style="width: auto;" />
-              
-              <div class="student-action-buttons" style="display: flex; gap: 0.5rem; flex-wrap: wrap; flex: 1;">
-                <button v-if="user.role === 'admin'" type="button" @click="showClassModal = true" class="btn btn-secondary">Tambah Kelas</button>
-                <button type="button" @click="showStudentModal = true" class="btn btn-primary">Tambah Siswa</button>
-              </div>
             </div>
 
             <div class="table-container">
