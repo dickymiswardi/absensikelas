@@ -332,6 +332,11 @@ a:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
+.attendance-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
 /* Badges */
 .badge {
   display: inline-flex;
@@ -411,8 +416,10 @@ a:hover {
     width: 100%;
   }
 
-  td[style*="display: flex"] {
-    flex-wrap: wrap;
+  .attendance-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
   }
 }
 

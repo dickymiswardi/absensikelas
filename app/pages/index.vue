@@ -334,7 +334,7 @@ async function downloadReport() {
                   <tr v-for="s in students" :key="s.id">
                     <td>{{ s.nisn }}</td>
                     <td>{{ s.name }}</td>
-                    <td style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <td class="attendance-actions">
                       <button @click="markAttendance(s, 'hadir')" class="badge" :class="s.status === 'hadir' ? 'badge-green' : 'badge-gray'">Hadir</button>
                       <button @click="markAttendance(s, 'sakit')" class="badge" :class="s.status === 'sakit' ? 'badge-blue' : 'badge-gray'">Sakit</button>
                       <button @click="markAttendance(s, 'izin')" class="badge" :class="s.status === 'izin' ? 'badge-blue' : 'badge-gray'">Izin</button>
