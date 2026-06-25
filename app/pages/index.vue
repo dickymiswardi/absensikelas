@@ -126,6 +126,9 @@ async function addClass() {
   loadDashboardData()
 }
 
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
+
 const newStudentForm = ref({ nisn: '', name: '' })
 async function addStudent() {
   const cId = user.value?.role === 'admin' ? selectedClass.value : user.value?.roleCodeValue
@@ -137,6 +140,63 @@ async function addStudent() {
   })
   newStudentForm.value = { nisn: '', name: '' }
   loadStudents()
+}
+
+// PDF Report Logic
+const reportStartDate = ref(new Date().toISOString().split('T')[0])
+const reportEndDate = ref(new Date().toISOString().split('T')[0])
+const generatingReport = ref(false)
+
+async function downloadReport() {
+  const cId = user.value?.role === 'admin' ? selectedClass.value : user.value?.roleCodeValue
+  if (!cId) {
+    alert('Silakan pilih kelas terlebih dahulu.')
+    return
+  }
+  if (!reportStartDate.value || !reportEndDate.value) {
+    alert('Pilih rentang tanggal terlebih dahulu.')
+    return
+  }
+  if (reportStartDate.value > reportEndDate.value) {
+    alert('Tanggal mulai tidak boleh lebih besar dari tanggal akhir.')
+    return
+  }
+
+  generatingReport.value = true
+  try {
+    const res: any = await $fetch(`/api/attendance/report?classId=${cId}&startDate=${reportStartDate.value}&endDate=${reportEndDate.value}`)
+    const reportData = res.report
+    const classObj = classes.value.find(c => c.id === cId)
+    const className = classObj ? classObj.name : (user.value?.roleCodeValue || 'Kelas')
+
+    const doc = new jsPDF()
+    
+    doc.setFontSize(16)
+    doc.text('Rekapitulasi Absensi Siswa', 14, 15)
+    doc.setFontSize(11)
+    doc.text(`Kelas: ${className}`, 14, 23)
+    doc.text(`Periode: ${reportStartDate.value} s.d ${reportEndDate.value}`, 14, 29)
+
+    const tableColumn = ["No", "NISN", "Nama Siswa", "Hadir", "Sakit", "Izin", "Alpha", "Persentase"]
+    const tableRows = reportData.map((s: any, i: number) => [
+      i + 1, s.nisn, s.name, s.hadir, s.sakit, s.izin, s.alpha, s.percentage
+    ])
+
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 35,
+      theme: 'grid',
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [37, 99, 235] }
+    })
+
+    doc.save(`Rekap_${className}_${reportStartDate.value}_${reportEndDate.value}.pdf`)
+  } catch (error) {
+    alert('Gagal mengunduh laporan. Pastikan koneksi dan data valid.')
+  } finally {
+    generatingReport.value = false
+  }
 }
 </script>
 
@@ -258,6 +318,31 @@ async function addStudent() {
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Report Management -->
+        <div class="glass-panel dash-card">
+          <div class="dash-card-header">
+            <h3 class="dash-card-title">Laporan Rekap Absensi</h3>
+          </div>
+          <div v-if="!selectedClass && user.role === 'admin'" class="alert alert-error">
+            Pilih kelas untuk mengunduh laporan.
+          </div>
+          <div v-else>
+            <form @submit.prevent="downloadReport" style="display: flex; flex-direction: column; gap: 1rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Mulai Tanggal</label>
+                <input type="date" v-model="reportStartDate" class="form-input" required />
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label">Sampai Tanggal</label>
+                <input type="date" v-model="reportEndDate" class="form-input" required />
+              </div>
+              <button type="submit" class="btn btn-primary" :disabled="generatingReport">
+                {{ generatingReport ? 'Menyiapkan PDF...' : 'Unduh Laporan (PDF)' }}
+              </button>
+            </form>
           </div>
         </div>
 
